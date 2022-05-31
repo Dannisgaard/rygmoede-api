@@ -1,0 +1,48 @@
+.modalProgres {
+    position: fixed;
+    width: 360px;
+    height: 90px;
+    padding: 25px;
+    left: 40%;
+    top: 40%;
+    background: #FFFFFF;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+}
+.modalProgres h2 {
+    font-size: 20px;
+    font-weight: bold;
+    color: #4A4A4A;
+    margin-top: 20px;
+    font-weight: 400;
+}
+
+.loader-blue {
+    width: 60px;
+    height: 6px;
+    left: 581.34px;
+    top: 549.09px;
+    background: #2F80ED;
+    animation: loading 1.5s linear infinite;
+    border-radius: 8px;
+}
+
+.loader-bar {
+    width: 340.71px;
+    height: 6px;
+    left: 551.82px;
+    top: 549.09px;
+
+    /* Gray 6 */
+    background: #F2F2F2;
+    border-radius: 8px;
+}
+
+@keyframes loading {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(280px);
+    }
+}
