@@ -3,7 +3,8 @@ from config import config
 
 class Connection:
     def __init__(self):
-        self.client = f"mongodb+srv://{config.config().DB_USER}:{config.config().DB_PASSWORD}@{config.config().DB_HOST}/?retryWrites=true&w=majority"
+        # self.client = f"mongodb://{config.config().DB_USER}:{config.config().DB_PASSWORD}@{config.config().DB_HOST}/?retryWrites=true&w=majority"
+        self.client = f"mongodb://{config.config().DB_HOST}/?retryWrites=true&w=majority"
 
     def connect(self):
 

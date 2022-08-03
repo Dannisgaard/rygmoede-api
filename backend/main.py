@@ -8,7 +8,7 @@ from connection import conndb
 
 app = FastAPI()
 
-origins = ["http://localhost:8000", config.config().API_URL , config.config().CLIENT_SIDE_URL]
+origins = ["http://192.168.1.23:8000", config.config().API_URL , config.config().CLIENT_SIDE_URL]
 
 app.add_middleware(
     CORSMiddleware,

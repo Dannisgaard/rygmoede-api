@@ -21,7 +21,7 @@ def retrieve_photo(id: str):
     try:
         client = conndb.Connection()
         client.connect()
-        photo = client.get_collection("imageUploader", "photos").find_one({"_id": ObjectId(id)})
+        photo = client.get_collection("rygmoede", "photos").find_one({"_id": ObjectId(id)})
         print(photo)
         if photo is None:
             raise HTTPException(status_code=404, detail="Photo not found")
@@ -34,7 +34,7 @@ def retrieve_image(id: str):
     try:
         client = conndb.Connection()
         client.connect()
-        collection = client.get_collection("imageUploader", "photos")
+        collection = client.get_collection("rygmoede", "photos")
         image = collection.find_one({"_id": ObjectId(id)})
         if image is None:
             raise HTTPException(status_code=404, detail="Image not found")
@@ -51,7 +51,7 @@ def uploadImage(
 
     client = conndb.Connection()
     client.connect()
-    collection = client.get_collection("imageUploader", "photos")
+    collection = client.get_collection("rygmoede", "photos")
     path = f"storage/imgs/{image.filename}"
     print(image.filename)
     with open(path, 'wb') as buffer:
