@@ -2,7 +2,7 @@ from connection import conndb
 from fastapi import UploadFile, File, APIRouter, HTTPException, status
 from fastapi.responses import FileResponse
 import shutil
-from models.photo import Photo
+from app.models.photo import Photo
 from bson.objectid import ObjectId
 import os
 
