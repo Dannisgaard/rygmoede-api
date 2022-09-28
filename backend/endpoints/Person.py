@@ -2,10 +2,10 @@ from connection import conndb
 from fastapi import APIRouter, Body, Depends, Path, Query, HTTPException
 from fastapi.responses import FileResponse
 import shutil
-from app.crud.person import create_person, get_person_by_name
+from app.crud.person import create_person, get_person_by_name, get_all_persons
 from app.core.utils import create_aliased_response
 from app.db.mongodb import AsyncIOMotorClient, get_database
-from app.models.person import Person
+from app.models.person import Person, ManyPersonsInResponse
 from app.models.person import (
     Person,
     PersonInDb,
@@ -30,20 +30,25 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
-@router.get(path="/get_person/{id}")
-def retrieve_photo(id: str):
+
+@router.get(path="/get_person_by_name/{name}", tags=["Person"])
+async def retrieve_person_by_name(name: str,  db: AsyncIOMotorClient = Depends(get_database)) -> PersonInDb:
     """
-    Retrieve a person by id
+    Retrieve a person by name
     """
     try:
-        client = conndb.Connection()
-        client.connect()
-        person = client.get_collection("rygmoede", "person").find_one({"_id": ObjectId(id)})
-        if person is None:
+        person_by_name = await get_person_by_name(db, name)
+        if person_by_name is None:
             raise HTTPException(status_code=404, detail="Person not found")
-        return {**person,"_id": str(person["_id"])}
+        return PersonInDb(**person_by_name.dict())
     except Exception as e:
-        print(e)
+        pass
+
+
+@router.get("/persons", response_model=ManyPersonsInResponse, tags=["Person"])
+async def get_persons(db: AsyncIOMotorClient = Depends(get_database)):
+    dbpersons = await get_all_persons(db)
+    return create_aliased_response(ManyPersonsInResponse(persons=dbpersons))
 
 
 @router.post("",

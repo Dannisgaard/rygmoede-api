@@ -6,7 +6,7 @@ from uuid import UUID
 from app.models.person import (
     Person,
     PersonInDb,
-    PersonInResponse,
+    ManyPersonsInResponse,
     PersonInUpdate,
 )
 from app.db.mongodb import AsyncIOMotorClient
@@ -32,12 +32,9 @@ async def get_person_by_name(conn: AsyncIOMotorClient,
         return None
 
 
-async def get_person_by_id(conn: AsyncIOMotorClient,
-                         person_id: UUID,
-                         username: Optional[str] = None) -> PersonInDb:
-    person_doc = await conn[database_name][persons_collection_name].find_one(
-        {"id": uuid.uuid4(person_id)})
-    if person_doc:
-        return PersonInDb(**person_doc)
-    else:
-        return None
+async def get_all_persons(conn: AsyncIOMotorClient) -> ManyPersonsInResponse:
+    persons: ManyPersonsInResponse = []
+    rows = conn[database_name][persons_collection_name].find()
+    async for row in rows:
+        persons.append(Person(**row, ))
+    return persons

@@ -15,4 +15,4 @@ class PersonInUpdate(RWModel):
     name: Optional[str] = None
 
 class ManyPersonsInResponse(RWModel):
-    books: List[Person]
+    persons: List[Person]
