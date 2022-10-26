@@ -36,4 +36,6 @@ database_name = MONGO_DB
 mettings_collection_name = "mettings"
 tags_collection_name = "tags"
 persons_collection_name = "persons"
+photos_collection_name = "photos"
 users_collection_name = "users"
+meetings_collection_name = "meetings"

@@ -1,16 +1,13 @@
 from connection import conndb
 from fastapi import APIRouter, Body, Depends, Path, Query, HTTPException
-from fastapi.responses import FileResponse
-import shutil
 from app.crud.person import create_person, get_person_by_name, get_all_persons
 from app.core.utils import create_aliased_response
 from app.db.mongodb import AsyncIOMotorClient, get_database
-from app.models.person import Person, ManyPersonsInResponse
 from app.models.person import (
     Person,
     PersonInDb,
     PersonInResponse,
-    PersonInUpdate,
+    ManyPersonsInResponse,
 )
 from bson.objectid import ObjectId
 from starlette.exceptions import HTTPException

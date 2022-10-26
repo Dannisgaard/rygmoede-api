@@ -1,5 +1,4 @@
 from datetime import date, datetime
-
 from pydantic import BaseModel, Field
 class Photo(BaseModel):
     photoname: str
