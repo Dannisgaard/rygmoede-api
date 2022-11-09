@@ -9,6 +9,7 @@ from app.models.meeting import (
     MeetingInDb,
 )
 from app.db.mongodb import AsyncIOMotorClient
+from .tag import (create_tags_that_not_exist)
 
 
 async def create_meeting(conn: AsyncIOMotorClient, meeting: Meeting,
@@ -16,7 +17,7 @@ async def create_meeting(conn: AsyncIOMotorClient, meeting: Meeting,
     meeeting_doc = meeting.dict()
     meeeting_doc["updated_at"] = datetime.datetime.now()
     meeeting_doc["created_at"] = datetime.datetime.now()
-    await conn[database_name][meetings_collection_name].insert_one(meeeting_doc)
+    conn[database_name][meetings_collection_name].insert_one(meeeting_doc)
 
     return MeetingInDb(**meeeting_doc)
 

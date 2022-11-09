@@ -20,6 +20,7 @@ from app.models.beer import (
     BeerInDb
 )
 from app.crud.meeting import create_meeting, get_all_meetings, get_meeting_by_date
+from app.crud.tag import create_tags_that_not_exist
 
 
 router = APIRouter(
@@ -50,8 +51,7 @@ async def retrieve_meeting_by_date(date: str,  db: AsyncIOMotorClient = Depends(
 )
 async def create_new_meeting(
         meeting: Meeting = Body(..., embed=True),
-        db: AsyncIOMotorClient = Depends(get_database),
-):
+        db: AsyncIOMotorClient = Depends(get_database)):
     meeting_by_date = await get_meeting_by_date(db, meeting.date)
     if meeting_by_date:
         raise HTTPException(
@@ -60,6 +60,9 @@ async def create_new_meeting(
         )
 
     db_meeting = await create_meeting(db, meeting)
+    for beer in db_meeting.beers:
+        if beer.tagList:
+            await create_tags_that_not_exist(db, beer.tagList)
     return create_aliased_response(db_meeting)
 
 
