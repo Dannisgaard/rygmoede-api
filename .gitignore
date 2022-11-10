@@ -1,2 +1,5 @@
+__pycache__
+backend-ImageUploader
+vars
 venv/**
-backend/storage/imgs/*
+.env
