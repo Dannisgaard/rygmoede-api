@@ -11,8 +11,6 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
-
-
 @router.get("/tags", response_model=TagsList, tags=["Tags"])
 async def get_all_tags(db: AsyncIOMotorClient = Depends(get_database)):
     tags = await fetch_all_tags(db)

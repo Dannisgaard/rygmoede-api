@@ -12,7 +12,7 @@ from pathlib import Path
 
 tags_metadata = [
     {
-        "name": "Persons",
+        "name": "Person",
         "description": "Manage persons in MongoDB.",
     },
     {
