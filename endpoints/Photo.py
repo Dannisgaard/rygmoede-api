@@ -1,3 +1,4 @@
+from datetime import datetime
 from app.db.mongodb import AsyncIOMotorClient, get_database
 from fastapi import UploadFile, File, Depends, APIRouter, HTTPException, status
 from fastapi.responses import FileResponse
@@ -70,6 +71,7 @@ async def uploadImage(
             size= round(buffer.__sizeof__()/1024, ndigits=3),
             path=f"../storage/imgs/{image.filename}",
             filename=image.filename,
+            created=datetime.now()
         )
     buffer.close()
 
