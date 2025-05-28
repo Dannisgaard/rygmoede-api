@@ -1,4 +1,4 @@
-FROM python:3.9
+FROM python:3.9-bullseye
 
 RUN mkdir /rygmoede
 # set work directory
