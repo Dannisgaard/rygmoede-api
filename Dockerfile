@@ -15,4 +15,4 @@ WORKDIR /rygmoede
 
 # install dependencies
 RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+RUN pip install --progress-bar off -r requirements.txt
