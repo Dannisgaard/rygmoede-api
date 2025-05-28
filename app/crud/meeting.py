@@ -24,7 +24,7 @@ async def create_meeting(conn: AsyncIOMotorClient, meeting: Meeting,
 
 async def get_all_meetings(conn: AsyncIOMotorClient) -> ManyMeetingsInResponse:
     meetings: ManyMeetingsInResponse = []
-    rows = conn[database_name][meetings_collection_name].find()
+    rows = conn[database_name][meetings_collection_name].find().sort("date", 1)
     async for row in rows:
         meetings.append(Meeting(**row, ))
     return meetings

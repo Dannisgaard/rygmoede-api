@@ -1,5 +1,6 @@
 from bson.objectid import ObjectId
 from fastapi import APIRouter, Body, Depends, Path, Query, HTTPException
+from fastapi.responses import PlainTextResponse
 from starlette.exceptions import HTTPException
 from app.db.mongodb import AsyncIOMotorClient, get_database
 from app.core.utils import create_aliased_response
@@ -70,3 +71,20 @@ async def create_new_meeting(
 async def get_meetings(db: AsyncIOMotorClient = Depends(get_database)):
     dbmeetings = await get_all_meetings(db)
     return create_aliased_response(ManyMeetingsInResponse(meetings=dbmeetings))
+
+
+@router.get("/meetings_markdown", response_class=PlainTextResponse, tags=["Meeting"])
+async def get_meetings_markdown(db: AsyncIOMotorClient = Depends(get_database)):
+    dbmeetings = await get_all_meetings(db)
+    markdown = "# Oversigt over alle rygmøder\n"
+    markdown += "========================\n"
+    for meeting in dbmeetings:
+        markdown += f"### Møde den {meeting.date.strftime('%d-%m-%Y')} hos {meeting.host}\n"
+        for beer in meeting.beers:
+            markdown += f"- Øl fra bryggeriet {beer.brewery} valgt af {beer.chosenBy} her fået {beer.numberOfStars} stjerner <br>\n"
+            if beer.tagList:
+                markdown += f"  - Smag: {', '.join(beer.tagList)}<br>\n"
+            markdown += f"<img src='https://rygmoede.dannisgaard.dk/api/photo/image/{beer.etiquetteImage}' alt='Foto af etiket' style='width: 300px;'></img>\n"
+        markdown += "---\n"
+        markdown += "\n"
+    return markdown
