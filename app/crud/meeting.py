@@ -3,11 +3,7 @@ from typing import Optional
 from app.core.config import database_name, meetings_collection_name
 import uuid
 from uuid import UUID
-from app.models.meeting import (
-    Meeting,
-    ManyMeetingsInResponse,
-    MeetingInDb,
-)
+from app.models.meeting import Meeting, ManyMeetingsInResponse, MeetingInDb
 from app.db.mongodb import AsyncIOMotorClient
 from .tag import (create_tags_that_not_exist)
 
@@ -24,7 +20,7 @@ async def create_meeting(conn: AsyncIOMotorClient, meeting: Meeting,
 
 async def get_all_meetings(conn: AsyncIOMotorClient) -> ManyMeetingsInResponse:
     meetings: ManyMeetingsInResponse = []
-    rows = conn[database_name][meetings_collection_name].find().sort("date", 1)
+    rows = conn[database_name][meetings_collection_name].find()
     async for row in rows:
         meetings.append(Meeting(**row, ))
     return meetings
