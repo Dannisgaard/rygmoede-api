@@ -17,14 +17,11 @@ router = APIRouter(
 
 
 @router.get(path="/get_photo/{id}")
-async def retrieve_photo(id: str, db: AsyncIOMotorClient = Depends(get_database)):
+async def retrieve_photo(id: str, db: AsyncIOMotorClient = Depends(get_database)): # type: ignore
     """
-    Retrieve a photo by id
+    Retrieve a photo by id and return the photo metadata as JSON. If the photo is not found, return a 404 error.
     """
     try:
-        # client = conndb.Connection()
-        # client.connect()
-        # photo = client.get_collection("rygmoede", "photos").find_one({"_id": ObjectId(id)})
         photo = await get_photo_by_id(db, id)
 
         print(photo)
@@ -36,12 +33,10 @@ async def retrieve_photo(id: str, db: AsyncIOMotorClient = Depends(get_database)
 
 
 @router.get(path="/image/{id}")
-async def retrieve_image(id: str, db: AsyncIOMotorClient = Depends(get_database)):
+async def retrieve_image(id: str, db: AsyncIOMotorClient = Depends(get_database)): # type: ignore
+    """
+    Retrieve a photo by id and return the photo as an image file. If the photo is not found, return a 404 error."""
     try:
-        # client = conndb.Connection()
-        # client.connect()
-        # collection = client.get_collection("rygmoede", "photos")
-        # image = collection.find_one({"_id": ObjectId(id)})
         image = await get_photo_by_id(db, id)
         if image is None:
             raise HTTPException(status_code=404, detail="Image not found")
@@ -54,11 +49,9 @@ async def retrieve_image(id: str, db: AsyncIOMotorClient = Depends(get_database)
 @router.post(path="/upload", tags=["Photo"], summary="Upload Photo", description="Upload Photo", response_description="Upload Photo",status_code=status.HTTP_201_CREATED)
 async def uploadImage(
     image: UploadFile = File(...),
-    db: AsyncIOMotorClient = Depends(get_database)):
-
-    # client = conndb.Connection()
-    # client.connect()
-    # collection = client.get_collection("rygmoede", "photos")
+    db: AsyncIOMotorClient = Depends(get_database)): # type: ignore
+    """
+    Upload a photo and save the photo metadata in MongoDB. The photo file will be saved in the storage/imgs/ directory. The photo metadata will be saved in the photos collection in MongoDB. The photo metadata will include the original filename, the mimetype, the size, the path, the filename and the created date. The response will include the id of the inserted photo metadata."""
 
     path = f"storage/imgs/{image.filename}"
     print(image.filename)
@@ -75,7 +68,6 @@ async def uploadImage(
         )
     buffer.close()
 
-    # insertion = collection.insert_one(photo.dict()).inserted_id
     insertion = await insert_photo(db, photo)
     return {
         "id": str(insertion.inserted_id)

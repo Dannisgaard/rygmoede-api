@@ -32,9 +32,9 @@ router = APIRouter(
 )
 
 @router.get(path="/get_meting_by_date/{date}", tags=["Meeting"])
-async def retrieve_meeting_by_date(date: str,  db: AsyncIOMotorClient = Depends(get_database)) -> MeetingInDb:
+async def retrieve_meeting_by_date(date: str,  db: AsyncIOMotorClient = Depends(get_database)) -> MeetingInDb: # type: ignore
     """
-    Retrieve a meeting by date
+    Retrieve a meeting by exact date
     """
     try:
         person_by_name = await get_meeting_by_date(db, date)
@@ -52,7 +52,10 @@ async def retrieve_meeting_by_date(date: str,  db: AsyncIOMotorClient = Depends(
 )
 async def create_new_meeting(
         meeting: Meeting = Body(..., embed=True),
-        db: AsyncIOMotorClient = Depends(get_database)):
+        db: AsyncIOMotorClient = Depends(get_database)): # type: ignore
+    """Create a new meeting. If a meeting with the same date already exists, return a 422 error.
+    """
+
     meeting_by_date = await get_meeting_by_date(db, meeting.date)
     if meeting_by_date:
         raise HTTPException(
@@ -70,11 +73,14 @@ async def create_new_meeting(
 @router.get("/meetings", response_model=ManyMeetingsInResponse, tags=["Meeting"])
 async def get_meetings(db: AsyncIOMotorClient = Depends(get_database)):
     dbmeetings = await get_all_meetings(db)
+    """Get all meetings. Return a list of meetings."""
+
     return create_aliased_response(ManyMeetingsInResponse(meetings=dbmeetings))
 
 
 @router.get("/meetings_markdown", response_class=PlainTextResponse, tags=["Meeting"])
 async def get_meetings_markdown(db: AsyncIOMotorClient = Depends(get_database)):
+    """Get all meetings and return them in Markdown format."""
     dbmeetings = await get_all_meetings(db)
     markdown = "# Oversigt over alle rygmøder\n"
     markdown += "========================\n"
