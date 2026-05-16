@@ -1,4 +1,6 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
+from fastapi_mcp import FastApiMCP
 from starlette.exceptions import HTTPException
 from starlette.middleware.cors import CORSMiddleware
 from starlette.status import HTTP_422_UNPROCESSABLE_ENTITY
@@ -26,13 +28,27 @@ tags_metadata = [
     },
 ]
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await connect_to_mongo()
+    yield
+    await close_mongo_connection()
+
+
 app = FastAPI(
     title=PROJECT_NAME,
     description=
     "Api for Rygmøde app, remember witch beer we tasted.",
     version="0.1.0",
     openapi_tags=tags_metadata,
+    lifespan=lifespan,
 )
+
+mcp = FastApiMCP(app)
+
+# Mount the MCP server directly to your FastAPI app
+mcp.mount()
+
 current_file = Path(__file__)
 project_root = current_file.parent.parent
 project_root_absolute = project_root.resolve()
@@ -50,9 +66,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-app.add_event_handler("startup", connect_to_mongo)
-app.add_event_handler("shutdown", close_mongo_connection)
 
 app.add_exception_handler(HTTPException, http_error_handler)
 app.add_exception_handler(HTTP_422_UNPROCESSABLE_ENTITY,
