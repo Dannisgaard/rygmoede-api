@@ -5,7 +5,7 @@ from pydantic import BaseConfig, BaseModel
 
 class RWModel(BaseModel):
     class Config(BaseConfig):
-        allow_population_by_field_name = True
+        validate_by_name = True
         json_encoders = {
             datetime:
             lambda dt: dt.replace(tzinfo=timezone.utc).isoformat().replace(

@@ -44,11 +44,6 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-mcp = FastApiMCP(app)
-
-# Mount the MCP server directly to your FastAPI app
-mcp.mount()
-
 current_file = Path(__file__)
 project_root = current_file.parent.parent
 project_root_absolute = project_root.resolve()
@@ -72,3 +67,26 @@ app.add_exception_handler(HTTP_422_UNPROCESSABLE_ENTITY,
                           http_422_error_handler)
 
 app.include_router(api_router, prefix=API_V1_STR)
+
+mcp = FastApiMCP(app,
+    name="Rygmøde API MCP",
+    description="MCP server til at henter data fra Rygmøderne til brug i Rygmøde appen.",
+    describe_full_response_schema=True,
+    describe_all_responses=True,
+)
+
+# Filter by excluding specific operation IDs
+exclude_operations_mcp = FastApiMCP(
+    app,
+    name="Rygmøde API MCP - Excluded Operations",
+    exclude_operations=[
+        "create_new_meeting_api_meeting_create_post",
+        "uploadImage_api_photo_upload_post",
+        "create_new_person_api_person_post",
+        "home_api__get",
+    ],
+)
+
+
+# Mount the MCP server with streamable HTTP transport
+exclude_operations_mcp.mount_http(mount_path="/exclude-operations-mcp")
