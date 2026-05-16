@@ -1,7 +1,6 @@
 import os
 from dotenv import load_dotenv
-from starlette.datastructures import CommaSeparatedStrings, Secret
-from databases import DatabaseURL
+from starlette.datastructures import Secret
 
 API_V1_STR = "/api"
 
@@ -25,11 +24,9 @@ if not MONGODB_URL:
     MONGO_USER = os.getenv("MONGO_USER", "superuser")
     MONGO_PASS = os.getenv("MONGO_PASSWORD", "changeMeToAStrongPassword")
 
-    MONGODB_URL = DatabaseURL(
-        f"mongodb://{MONGO_USER}:{MONGO_PASS}@{MONGO_HOST}:{MONGO_PORT}/{MONGO_DB}"
-    )
+    MONGODB_URL = f"mongodb://{MONGO_USER}:{MONGO_PASS}@{MONGO_HOST}:{MONGO_PORT}/{MONGO_DB}"
 else:
-    MONGODB_URL = DatabaseURL(MONGODB_URL)
+    MONGODB_URL = MONGODB_URL
 
 database_name = MONGO_DB
 mettings_collection_name = "mettings"
