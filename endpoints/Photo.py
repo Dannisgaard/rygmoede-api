@@ -53,20 +53,23 @@ async def uploadImage(
     """
     Upload a photo and save the photo metadata in MongoDB. The photo file will be saved in the storage/imgs/ directory. The photo metadata will be saved in the photos collection in MongoDB. The photo metadata will include the original filename, the mimetype, the size, the path, the filename and the created date. The response will include the id of the inserted photo metadata."""
 
-    path = f"storage/imgs/{image.filename}"
+    upload_dir = "storage/imgs"
+    os.makedirs(upload_dir, exist_ok=True)
+    path = os.path.join(upload_dir, image.filename)
     print(image.filename)
     with open(path, 'wb') as buffer:
         shutil.copyfileobj(image.file, buffer)
-        photo = Photo(
-            photoname=image.filename,
-            originalname=image.filename,
-            mimetype=image.content_type,
-            size= round(buffer.__sizeof__()/1024, ndigits=3),
-            path=f"../storage/imgs/{image.filename}",
-            filename=image.filename,
-            created=datetime.now()
-        )
-    buffer.close()
+
+    file_size = os.path.getsize(path)
+    photo = Photo(
+        photoname=image.filename,
+        originalname=image.filename,
+        mimetype=image.content_type,
+        size=file_size,
+        path=f"../storage/imgs/{image.filename}",
+        filename=image.filename,
+        created=datetime.now()
+    )
 
     insertion = await insert_photo(db, photo)
     return {
