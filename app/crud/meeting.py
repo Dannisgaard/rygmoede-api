@@ -1,5 +1,5 @@
 import datetime
-from typing import Optional
+from typing import Optional, List
 from app.core.config import database_name, meetings_collection_name
 import uuid
 from uuid import UUID
@@ -18,12 +18,17 @@ async def create_meeting(conn: AsyncIOMotorClient, meeting: Meeting,
     return MeetingInDb(**meeeting_doc)
 
 
-async def get_all_meetings(conn: AsyncIOMotorClient) -> ManyMeetingsInResponse:
-    meetings: ManyMeetingsInResponse = []
-    rows = conn[database_name][meetings_collection_name].find()
-    async for row in rows:
-        meetings.append(Meeting(**row, ))
-    return meetings
+async def get_all_meetings(conn, skip: int = 0, limit: int = 10) -> List[Meeting]:
+    cursor = conn[database_name][meetings_collection_name].find().skip(skip).limit(limit)
+    return [Meeting(**document) for document in await cursor.to_list(length=limit)]
+
+
+# async def get_all_meetings(conn: AsyncIOMotorClient) -> ManyMeetingsInResponse:
+#     meetings: ManyMeetingsInResponse = []
+#     rows = conn[database_name][meetings_collection_name].find()
+#     async for row in rows:
+#         meetings.append(Meeting(**row, ))
+#     return meetings
 
 
 async def get_meeting_by_date(conn: AsyncIOMotorClient,

@@ -74,8 +74,13 @@ async def create_new_meeting(
 
 
 @router.get("/meetings", response_model=ManyMeetingsInResponse, tags=["Meeting"])
-async def get_meetings(db: AsyncIOMotorClient = Depends(get_database)): # type: ignore
-    dbmeetings = await get_all_meetings(db)
+async def get_meetings(db: AsyncIOMotorClient = Depends(get_database), skip: int = 0, limit: int = 20): # type: ignore
+    dbmeetings = await get_all_meetings(db, skip=skip, limit=limit) # Fetch first 20 meetings
+    for meeting in dbmeetings:
+        print(meeting.date)
+
+
+    # dbmeetings = await get_all_meetings(db)
     """Get all meetings. Return a list of meetings."""
 
     return create_aliased_response(ManyMeetingsInResponse(meetings=dbmeetings))
