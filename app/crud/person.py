@@ -33,8 +33,5 @@ async def get_person_by_name(conn: AsyncIOMotorClient,
 
 
 async def get_all_persons(conn: AsyncIOMotorClient) -> ManyPersonsInResponse:
-    persons: ManyPersonsInResponse = []
-    rows = conn[database_name][persons_collection_name].find()
-    async for row in rows:
-        persons.append(Person(**row, ))
-    return persons
+    rows = await conn[database_name][persons_collection_name].find().to_list(length=1000)
+    return [Person(**row) for row in rows]

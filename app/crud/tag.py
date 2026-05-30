@@ -6,12 +6,8 @@ from app.core.config import database_name, tags_collection_name
 
 
 async def fetch_all_tags(conn: AsyncIOMotorClient) -> List[TagInDB]:
-    tags = []
-    rows = conn[database_name][tags_collection_name].find()
-    async for row in rows:
-        tags.append(TagInDB(**row))
-
-    return tags
+    rows = await conn[database_name][tags_collection_name].find().to_list(length=1000)
+    return [TagInDB(**row) for row in rows]
 
 
 async def create_tags_that_not_exist(conn: AsyncIOMotorClient,
